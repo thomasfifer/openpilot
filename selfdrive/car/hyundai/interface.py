@@ -178,10 +178,10 @@ class CarInterface(object):
     ret.seatbeltUnlatched = not self.CS.seatbelt
 
     # low speed steer alert hysteresis logic (only for cars with steer cut off above 10 m/s)
-    if self.CS.v_ego_raw < (self.CS.min_steer_speed) and self.CS.min_steer_speed > 2.:
-      self.low_speed_alert = True
-    if self.CS.v_ego_raw > (self.CS.min_steer_speed + 0.2):
-      self.low_speed_alert = False
+    #if self.CS.v_ego_raw < (self.CS.min_steer_speed) and self.CS.min_steer_speed > 2.:
+    #  self.low_speed_alert = True
+    #if self.CS.v_ego_raw > (self.CS.min_steer_speed + 0.2):
+    self.low_speed_alert = False
 
     events = []
     if (self.CS.gear_shifter != 'drive') and (self.CS.gear_tcu != 'drive') and (self.CS.gear_shifter_cluster != 'drive'):
