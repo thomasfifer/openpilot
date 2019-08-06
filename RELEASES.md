@@ -1,50 +1,79 @@
+Version 0.6.2.6-ku7 (2019-08)
+========================
+  * Revert to better Panda which is not tested against cppcheck coverage
+
+Version 0.6.2 (2019-07-29)
+========================
+ * New driving model!
+ * Improve lane tracking with double lines
+ * Strongly improve stationary vehicle detection
+ * Strongly reduce cases of braking due to false leads
+ * Better lead tracking around turns
+ * Improve cut-in prediction by using neural network
+ * Improve lateral control on Toyota Camry and C-HR thanks to zorrobyte!
+ * Fix unintended openpilot disengagements on Jeep thanks to adhintz!
+ * Fix delayed transition to offroad when car is turned off
+
+Version 0.6.1 (2019-07-21)
+========================
+ * Remote SSH with comma prime and [ssh.comma.ai](https://ssh.comma.ai)
+ * Panda code Misra-c2012 compliance, tested against cppcheck coverage
+ * Lockout openpilot after 3 terminal alerts for driver distracted or unresponsive
+ * Toyota Sienna support thanks to wocsor!
+
+
 Version 0.6.0.5-ku7 (2019-08-**)
-* HKG - Improve Min Speed
-* HKG - Support Genesis (@xx979xx)
+========================
+  * HKG - Improve Min Speed
+  * HKG - Support Genesis (@xx979xx)
+
 
 Version 0.6.0.4-ku7 (2019-08-06)
 ========================
-* HKG - Log to cloudlog rather than print to stdout
-* HKG - WIP: mapd is going to need a lot of reworking
-* HKG - Forward LKAS_Icon (not really an icon)
-* HKG - Disengage Properly
-* HKG - Fixed Brute Force Checksum Learner
-* HKG - Detect Genesis and default min speed
-* HKG - Fix Min Speed Code
-* HKG - Change Down Rate (@TK211X)
-* HKG - Temporarily remove CLU11 (@TK211X)
+  * HKG - Log to cloudlog rather than print to stdout
+  * HKG - WIP: mapd is going to need a lot of reworking
+  * HKG - Forward LKAS_Icon (not really an icon)
+  * HKG - Disengage Properly
+  * HKG - Fixed Brute Force Checksum Learner
+  * HKG - Detect Genesis and default min speed
+  * HKG - Fix Min Speed Code
+  * HKG - Change Down Rate (@TK211X)
+  * HKG - Temporarily remove CLU11 (@TK211X)
 
 
 Version 0.6.0.3-ku7 (2019-07-09)
 ========================
-* HKG - Send fingerprints to Sentry
-* HKG - WIP: bring back mapd from 0.5.12
-* HKG - WIP: Auto Set Cruise to Speed Limit
-* HKG - Don't Learn Min Steer Speed when turning corners
-* HKG - Create MDPS12 Message (to reduce/stop Stock cam faults)
-* HKG - Implement Min Speed Speed Warning
+  * HKG - Send fingerprints to Sentry
+  * HKG - WIP: bring back mapd from 0.5.12
+  * HKG - WIP: Auto Set Cruise to Speed Limit
+  * HKG - Don't Learn Min Steer Speed when turning corners
+  * HKG - Create MDPS12 Message (to reduce/stop Stock cam faults)
+  * HKG - Implement Min Speed Speed Warning
 
 Version 0.6.0.2-ku7 (2019-07-08)
 ========================
-* HKG - Auto Discover Checksum if LKAS11 Message not present
-* HKG - Disable Torque on Lane Change
-* HKG - Auto Learn Min Steer Speed Cutoff
-* HKG - Disable during Min Steer Speed, where min speed is learnt
-* HKG - Improve Support, maybe even Genesis
-* HKG - Clean up redundant code, remove last "Fingerprint" stuff
-* HKG - Add Sentry Crash Reporting
-* HKG - PUF is back, Auto Forward CAM/CAR when EON is not active
-* HKG - Hopefully a better attempt at "Remove remnants of CP UI"
+  * HKG - Auto Discover Checksum if LKAS11 Message not present
+  * HKG - Disable Torque on Lane Change
+  * HKG - Auto Learn Min Steer Speed Cutoff
+  * HKG - Disable during Min Steer Speed, where min speed is learnt
+  * HKG - Improve Support, maybe even Genesis
+  * HKG - Clean up redundant code, remove last "Fingerprint" stuff
+  * HKG - Add Sentry Crash Reporting
+  * HKG - PUF is back, Auto Forward CAM/CAR when EON is not active
+  * HKG - Hopefully a better attempt at "Remove remnants of CP UI"
 
 Version 0.6.0.1-ku7 (2019-07-05)
 ========================
-* HKG - Auto Support Cars with all 3 Gear Selector Types
-* HKG - Auto Support Cars with no SCC
-* HKG - Auto Learn Checksum from LKAS11
-* HKG - Do not diable on Accelerator or Brake
-* HKG - Removed Fingerprint Requiement
-* HKG - Removed Noisy Console/Logs
-* HKG - Remove remnants of CP UI
+  * HKG - Auto Support Cars with all 3 Gear Selector Types
+  * HKG - Auto Support Cars with no SCC
+  * HKG - Auto Learn Checksum from LKAS11
+  * HKG - Do not diable on Accelerator or Brake
+  * HKG - Removed Fingerprint Requiement
+  * HKG - Removed Noisy Console/Logs
+  * HKG - Remove remnants of CP UI
+
+
+
 
 Version 0.6 (2019-07-01)
 ========================
