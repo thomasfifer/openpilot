@@ -1,4 +1,8 @@
-Version 0.6.0.4-ku7 (2019-07-**)
+Version 0.6.0.5-ku7 (2019-08-**)
+* HKG - Improve Min Speed
+* HKG - Support Genesis (@xx979xx)
+
+Version 0.6.0.4-ku7 (2019-08-06)
 ========================
 * HKG - Log to cloudlog rather than print to stdout
 * HKG - WIP: mapd is going to need a lot of reworking
@@ -6,7 +10,9 @@ Version 0.6.0.4-ku7 (2019-07-**)
 * HKG - Disengage Properly
 * HKG - Fixed Brute Force Checksum Learner
 * HKG - Detect Genesis and default min speed
-* HLG - Fix Min Speed Code
+* HKG - Fix Min Speed Code
+* HKG - Change Down Rate (@TK211X)
+* HKG - Temporarily remove CLU11 (@TK211X)
 
 
 Version 0.6.0.3-ku7 (2019-07-09)

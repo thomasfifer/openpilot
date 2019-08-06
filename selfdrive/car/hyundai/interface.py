@@ -177,12 +177,6 @@ class CarInterface(object):
     ret.doorOpen = not self.CS.door_all_closed
     ret.seatbeltUnlatched = not self.CS.seatbelt
 
-    # low speed steer alert hysteresis logic (only for cars with steer cut off above 10 m/s)
-    #if self.CS.v_ego_raw < (self.CS.min_steer_speed) and self.CS.min_steer_speed > 2.:
-    #  self.low_speed_alert = True
-    #if self.CS.v_ego_raw > (self.CS.min_steer_speed + 0.2):
-    self.low_speed_alert = False
-
     events = []
     if (self.CS.gear_shifter != 'drive') and (self.CS.gear_tcu != 'drive') and (self.CS.gear_shifter_cluster != 'drive'):
       events.append(create_event('wrongGear', [ET.NO_ENTRY, ET.SOFT_DISABLE]))
@@ -209,7 +203,7 @@ class CarInterface(object):
     if ret.gasPressed:
       events.append(create_event('pedalPressed', [ET.PRE_ENABLE]))
 
-    if self.low_speed_alert:
+    if self.CS.low_speed_alert:
       events.append(create_event('belowSteerSpeed', [ET.WARNING]))
 
     ret.events = events

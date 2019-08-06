@@ -89,7 +89,7 @@ class CarController(object):
     ### Minimum Steer Speed ###
 
     # Apply Usage of Minimum Steer Speed
-    if CS.v_ego_raw < CS.min_steer_speed:
+    if CS.low_speed_alert:
       disable_steer = True
 
     ### Turning Indicators ###
