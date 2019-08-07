@@ -101,7 +101,7 @@ def create_mdps12(packer, car_fingerprint, cnt, mdps12, lkas11, checksum):
 
 def learn_checksum(packer, lkas11):
     values = {
-      "CF_Lkas_Icon": lkas11["CF_Lkas_Icon"],
+      "CF_Lkas_Bca_R": lkas11["CF_Lkas_Bca_R"],
       "CF_Lkas_LdwsSysState": lkas11["CF_Lkas_LdwsSysState"],
       "CF_Lkas_SysWarning": lkas11["CF_Lkas_SysWarning"],
       "CF_Lkas_LdwsLHWarning": lkas11["CF_Lkas_LdwsLHWarning"],
