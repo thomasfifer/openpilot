@@ -99,7 +99,6 @@ class CarInterface(object):
     ret.brakeMaxBP = [0.]
     ret.brakeMaxV = [1.]
 
-    ret.enableCamera = not any(x for x in CAMERA_MSGS if x in fingerprint) or is_panda_black
     ret.openpilotLongitudinalControl = False
     ret.enableCamera = True
     ret.steerLimitAlert = False

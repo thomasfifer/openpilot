@@ -108,7 +108,7 @@ def get_camera_parser(CP):
 
   signals = [
     # sig_name, sig_address, default
-    ("CF_Lkas_Icon", "LKAS11", 0),
+    ("CF_Lkas_Bca_R", "LKAS11", 0),
     ("CF_Lkas_LdwsSysState", "LKAS11", 0),
     ("CF_Lkas_SysWarning", "LKAS11", 0),
     ("CF_Lkas_LdwsLHWarning", "LKAS11", 0),
@@ -222,7 +222,7 @@ class CarState(object):
     self.stopped = cp.vl["SCC11"]['SCCInfoDisplay'] == 4. if self.has_scc else False
     self.mdps11_strang = cp.vl["MDPS11"]['CR_Mdps_StrAng']
     self.mdps11_stat = cp.vl["MDPS11"]['CF_Mdps_Stat']
-    self.lkas11_icon = cp_cam.vl["LKAS11"]['CF_Lkas_Icon']
+    self.lkas11_icon = cp_cam.vl["LKAS11"]['CF_Lkas_Bca_R']
     self.mdps12_flt = cp.vl["MDPS12"]['CF_Mdps_ToiFlt']
 
     self.user_brake = 0
