@@ -1,6 +1,7 @@
 Version 0.6.2.6-ku7 (2019-08)
 ========================
   * Revert to better Panda which is not tested against cppcheck coverage
+  * Do not let Stock LKAS engage (@xx979xx)
 
 Version 0.6.2 (2019-07-29)
 ========================

@@ -81,7 +81,7 @@ def create_mdps12(packer, car_fingerprint, cnt, mdps12, lkas11, checksum):
     "CR_Mdps_StrColTq": mdps12["CR_Mdps_StrColTq"],
     "CF_Mdps_Def": mdps12["CF_Mdps_Def"],
     "CF_Mdps_ToiActive": mdps12["CF_Mdps_ToiActive"] if (checksum == "crc8") else lkas11["CF_Lkas_ActToi"],
-    "CF_Mdps_ToiUnavail": mdps12["CF_Mdps_ToiUnavail"],
+    "CF_Mdps_ToiUnavail": 1, #mdps12["CF_Mdps_ToiUnavail"],
     "CF_Mdps_MsgCount2": mdps12["CF_Mdps_MsgCount2"] if (checksum == "crc8") else cnt,
     "CF_Mdps_Chksum2": mdps12["CF_Mdps_Chksum2"],
     "CF_Mdps_ToiFlt": mdps12["CF_Mdps_ToiFlt"] if (checksum == "crc8") else 0,
