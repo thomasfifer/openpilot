@@ -1,7 +1,11 @@
 Version 0.6.2.6-ku7 (2019-08)
 ========================
-  * Revert to better Panda which is not tested against cppcheck coverage
-  * Do not let Stock LKAS engage (@xx979xx)
+  * Merged in 0.6.2
+  * HKG - Fixed Panda, but no PUF yet
+  * HKG - Do not let Stock LKAS engage (@xx979xx)
+  * HKG - Reinstate CLU11
+  * HKG - Change S&G Resume as per @xx979xx changes
+  * HKG - Remove pcm_cancel_cmd to (hopefully) rectify SCC dash errors
 
 Version 0.6.2 (2019-07-29)
 ========================
@@ -23,7 +27,7 @@ Version 0.6.1 (2019-07-21)
  * Toyota Sienna support thanks to wocsor!
 
 
-Version 0.6.0.5-ku7 (2019-08-**)
+Version 0.6.0.5-ku7 (2019-08-**) ---- never publically released
 ========================
   * HKG - Improve Min Speed
   * HKG - Support Genesis (@xx979xx)
