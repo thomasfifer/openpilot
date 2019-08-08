@@ -49,6 +49,7 @@ class CarController(object):
 
     self.turning_signal_timer = 0
     self.camera_disconnected = False
+    self.checksum_found = False
 
     self.packer = CANPacker(dbc_name)
 
@@ -59,34 +60,40 @@ class CarController(object):
 
     ### Learn Checksum ###
 
-    # Learn Checksum from the Camera
-    if self.checksum == "NONE":
-      self.checksum = learn_checksum(self.packer, CS.lkas11)
-      cloudlog.info("Discovered Checksum")
-      if self.checksum == "NONE" and self.checksum_learn_cnt < 50:
-        self.checksum_learn_cnt += 1
-        return
-
-    # If MDPS is faulted from bad checksum, then cycle through all Checksums until 1 works
-    if CS.steer_error == 1:
-      self.camera_disconnected = True
-      cloudlog.warning("Camera Not Detected: Brute Forcing Checksums")
-      if self.checksum_learn_cnt > 300:
-        self.checksum_learn_cnt = 50
-        if self.checksum == "NONE":
-          cloudlog.info("Testing 6B Checksum")
-          self.checksum = "6B"
-        elif self.checksum == "6B":
-          cloudlog.info("Testing 7B Checksum")
-          self.checksum = "7B"
-        elif self.checksum == "7B":
-          cloudlog.info("Testing CRC8 Checksum")
-          self.checksum = "crc8"
-        else:
-          self.checksum = "NONE"
+    if not self.checksum_found:
+      # Learn Checksum from the Camera
+      if self.checksum == "NONE":
+        self.checksum = learn_checksum(self.packer, CS.lkas11)
+        if self.checksum == "NONE" and self.checksum_learn_cnt < 50:
+          self.checksum_learn_cnt += 1
           return
+        else:
+          cloudlog.info("Discovered Checksum %s" % self.checksum)
+          self.checksum_found = True
+
+      # If MDPS is faulted from bad checksum, then cycle through all Checksums until 1 works
+      if CS.steer_error == 1:
+        self.camera_disconnected = True
+        cloudlog.warning("Camera Not Detected: Brute Forcing Checksums")
+        if self.checksum_learn_cnt > 300:
+          self.checksum_learn_cnt = 50
+          if self.checksum == "NONE":
+            cloudlog.info("Testing 6B Checksum")
+            self.checksum = "6B"
+          elif self.checksum == "6B":
+            cloudlog.info("Testing 7B Checksum")
+            self.checksum = "7B"
+          elif self.checksum == "7B":
+            cloudlog.info("Testing CRC8 Checksum")
+            self.checksum = "crc8"
+          else:
+            self.checksum = "NONE"
+            return
+        else:
+          self.checksum_learn_cnt += 1
       else:
-        self.checksum_learn_cnt += 1
+        cloudlog.info("Discovered Checksum %s" % self.checksum)
+        self.checksum_found = True
 
     ### Minimum Steer Speed ###
 
