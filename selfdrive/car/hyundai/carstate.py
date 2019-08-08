@@ -236,10 +236,10 @@ class CarState(object):
     self.car_gas = cp.vl["EMS12"]['TPS']
 
     self.low_speed_alert = False
-    # If MDPS faults, low speed alert
-    if self.mdps12_flt == 0:
+    # If MDPS TOI faults, low speed alert
+    if self.mdps12_flt == 1:
       self.low_speed_alert = True
-    # If we have LKAS_Icon == 2, then we know its 16.7m/s
+    # If we have LKAS_Icon == 2, then we know its 16.7m/s (Suspected this is only seen on Genesis)
     if self.lkas11_icon == 2 and self.v_ego_raw < 16.8:
       self.low_speed_alert = True
 

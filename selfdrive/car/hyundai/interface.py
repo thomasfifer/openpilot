@@ -203,7 +203,7 @@ class CarInterface(object):
     if ret.gasPressed:
       events.append(create_event('pedalPressed', [ET.PRE_ENABLE]))
 
-    if self.CS.low_speed_alert and False:
+    if self.CS.low_speed_alert:
       events.append(create_event('belowSteerSpeed', [ET.WARNING]))
 
     ret.events = events

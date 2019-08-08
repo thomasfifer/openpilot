@@ -1,4 +1,11 @@
-Version 0.6.2.6-ku7 (2019-08)
+Version 0.6.2.7-ku7 (2019-08)
+========================
+  * Improve Auto Checksum Learner (this should fix LKAS Error Bugs)
+  * Reimpliment Dynamic Low Speed Alert
+  * Fixed 16.7m/s Low Speed Alert if believed to be Genesis
+
+
+Version 0.6.2.6-ku7 (2019-08-08)
 ========================
   * Merged in 0.6.2
   * HKG - Fixed Panda, but no PUF yet
