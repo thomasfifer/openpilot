@@ -71,7 +71,7 @@ class CarController(object):
     if CS.steer_error == 1:
       self.camera_disconnected = True
       cloudlog.warning("Camera Not Detected: Brute Forcing Checksums")
-      if self.checksum_learn_cnt > 250:
+      if self.checksum_learn_cnt > 300:
         self.checksum_learn_cnt = 50
         if self.checksum == "NONE":
           cloudlog.info("Testing 6B Checksum")
@@ -84,6 +84,7 @@ class CarController(object):
           self.checksum = "crc8"
         else:
           self.checksum = "NONE"
+          return
       else:
         self.checksum_learn_cnt += 1
 
