@@ -26,12 +26,10 @@ Version 0.6.1 (2019-07-21)
  * Lockout openpilot after 3 terminal alerts for driver distracted or unresponsive
  * Toyota Sienna support thanks to wocsor!
 
-
 Version 0.6.0.5-ku7 (2019-08-**) ---- never publically released
 ========================
   * HKG - Improve Min Speed
   * HKG - Support Genesis (@xx979xx)
-
 
 Version 0.6.0.4-ku7 (2019-08-06)
 ========================
@@ -44,7 +42,6 @@ Version 0.6.0.4-ku7 (2019-08-06)
   * HKG - Fix Min Speed Code
   * HKG - Change Down Rate (@TK211X)
   * HKG - Temporarily remove CLU11 (@TK211X)
-
 
 Version 0.6.0.3-ku7 (2019-07-09)
 ========================

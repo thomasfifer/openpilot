@@ -2,6 +2,7 @@ from selfdrive.car import limit_steer_rate
 from selfdrive.car.hyundai.hyundaican import create_lkas11, create_lkas12, \
                                              create_1191, create_1156, \
                                              learn_checksum, create_mdps12, create_clu11
+
 from selfdrive.car.hyundai.values import Buttons
 from selfdrive.can.packer import CANPacker
 import zmq
@@ -157,7 +158,7 @@ class CarController(object):
     ### Generate CAN Messages ###
 
     self.lkas11_cnt = self.cnt % 0x10
-    self.clu11_cnt = self.cnt % 0x10
+#   self.clu11_cnt = self.cnt % 0x10
     self.mdps12_cnt = self.cnt % 0x100
 
     if self.camera_disconnected:
