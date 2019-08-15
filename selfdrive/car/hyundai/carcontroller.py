@@ -11,6 +11,7 @@ import selfdrive.messaging as messaging
 from selfdrive.config import Conversions as CV
 from common.params import Params
 from selfdrive.swaglog import cloudlog
+import time
 
 
 
@@ -52,6 +53,9 @@ class CarController(object):
     self.checksum_found = False
 
     self.packer = CANPacker(dbc_name)
+    
+    self.min_steer_start_time = int(time.time()*1000.0)
+    self.duty_cycle_steering = False
 
   def update(self, enabled, CS, actuators, pcm_cancel_cmd, hud_alert):
     ### Error State Resets ###
@@ -98,8 +102,20 @@ class CarController(object):
     ### Minimum Steer Speed ###
 
     # Apply Usage of Minimum Steer Speed
-    if CS.low_speed_alert:
-      disable_steer = True
+    #if CS.low_speed_alert:
+    #  disable_steer = True
+
+    if CS.v_ego_raw < 14.7: #CS.min_steer_speed: #we are below minimum speed for normal steering
+      current_time_ms = int(time.time()*1000.0) #current time in miliseconds rounded off
+      if self.duty_cycle_steering and self.min_steer_start_time < current_time_ms - 30: #duty cycle of 0.03 seconds
+        self.min_steer_start_time = current_time_ms #reset half duty cycle start time
+        self.duty_cycle_steering = False # don't steer next time
+      elif self.min_steer_start_time < current_time_ms - 30:
+        self.min_steer_start_time = current_time_ms #reset half duty cycle start time
+        self.duty_cycle_steering = True #start steering next time
+        disable_steer = True
+      elif not duty_cycle_steering:
+        disable_steer = True
 
     ### Turning Indicators ###
     if (CS.left_blinker_on == 1 or CS.right_blinker_on == 1):
