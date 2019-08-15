@@ -153,6 +153,7 @@ class CarState(object):
                          C=[1.0, 0.0],
                          K=[[0.12287673], [0.29666309]])
     self.v_ego = 0.0
+    self.v_ego_raw = 0.0
     self.left_blinker_on = 0
     self.left_blinker_flash = 0
     self.right_blinker_on = 0
