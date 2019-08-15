@@ -239,9 +239,11 @@ class CarState(object):
     # If MDPS TOI faults, low speed alert
     if self.mdps12_flt == 1:
       self.low_speed_alert = True
+      self.min_steer_speed = self.v_ego_raw
     # If we have LKAS_Icon == 2, then we know its 16.7m/s (Suspected this is only seen on Genesis)
     if self.lkas11_icon == 2 and self.v_ego_raw < 16.8:
       self.low_speed_alert = True
+      self.min_steer_speed = self.v_ego_raw
 
     # Gear Selecton - This is not compatible with all Kia/Hyundai's, But is the best way for those it is compatible with
     gear = cp.vl["LVR12"]["CF_Lvr_Gear"]
