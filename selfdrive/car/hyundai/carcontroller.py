@@ -114,7 +114,7 @@ class CarController(object):
         self.min_steer_start_time = current_time_ms #reset half duty cycle start time
         self.duty_cycle_steering = True #start steering next time
         disable_steer = True
-      elif not duty_cycle_steering:
+      elif not self.duty_cycle_steering:
         disable_steer = True
 
     ### Turning Indicators ###
