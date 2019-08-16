@@ -106,16 +106,13 @@ class CarController(object):
     #  disable_steer = True
 
     if CS.v_ego_raw < 14.7: #CS.min_steer_speed: #we are below minimum speed for normal steering
-      current_time_ms = int(time.time()*1000.0) #current time in miliseconds rounded off
-      if self.duty_cycle_steering and self.min_steer_start_time < current_time_ms - 30: #duty cycle of 0.03 seconds
-        self.min_steer_start_time = current_time_ms #reset half duty cycle start time
-        self.duty_cycle_steering = False # don't steer next time
-      elif self.min_steer_start_time < current_time_ms - 30:
-        self.min_steer_start_time = current_time_ms #reset half duty cycle start time
-        self.duty_cycle_steering = True #start steering next time
+      if CS.mdps12_flt == 1: #we faulted the mdps, wait for it to unfault
         disable_steer = True
-      elif not self.duty_cycle_steering:
-        disable_steer = True
+      else:
+         # mdps takes 0.02 seconds to respond to steer request and set steer_state
+         # this toggles the request every 0.02 seconds plus small unknown error to read or set state
+         # state must be toggled no later than 0.04 seconds
+         disable_steer = not CS.steer_state
 
     ### Turning Indicators ###
     if (CS.left_blinker_on == 1 or CS.right_blinker_on == 1):
