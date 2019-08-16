@@ -112,7 +112,7 @@ class CarController(object):
          # mdps takes 0.02 seconds to respond to steer request and set steer_state
          # this toggles the request every 0.02 seconds plus small unknown error to read or set state
          # state must be toggled no later than 0.04 seconds
-         disable_steer = not CS.steer_state
+         disable_steer = CS.steer_state
 
     ### Turning Indicators ###
     if (CS.left_blinker_on == 1 or CS.right_blinker_on == 1):
