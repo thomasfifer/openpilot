@@ -160,6 +160,8 @@ class CarState(object):
     self.right_blinker_flash = 0
     self.has_scc = False
     self.min_steer_speed = 0
+    self.mdps12_flt = 0
+    self.steer_state = 0
 
   def update(self, cp, cp_cam):
     if (cp.vl["SCC11"]['TauGapSet'] > 0):
