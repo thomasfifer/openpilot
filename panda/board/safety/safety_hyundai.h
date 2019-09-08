@@ -1,4 +1,4 @@
-const int HYUNDAI_MAX_STEER = 256;             // like stock
+const int HYUNDAI_MAX_STEER = 300;             // like stock
 const int HYUNDAI_MAX_RT_DELTA = 112;          // max delta torque allowed for real time checks
 const uint32_t HYUNDAI_RT_INTERVAL = 250000;    // 250ms between real time checks
 const int HYUNDAI_MAX_RATE_UP = 6;
@@ -19,8 +19,6 @@ static void hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
   int bus = GET_BUS(to_push);
   int addr = GET_ADDR(to_push);
 
-  controls_allowed = 1;
-
   if (addr == 897) {
     int torque_driver_new = ((GET_BYTES_04(to_push) >> 11) & 0xfff) - 2048;
     // update array of samples
@@ -39,17 +37,19 @@ static void hyundai_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
   }
 
   // enter controls on rising edge of ACC, exit controls on ACC off
-  //if (addr == 1057) {
+  if (addr == 1057) {
     // 2 bits: 13-14
     //int cruise_engaged = (GET_BYTES_04(to_push) >> 13) & 0x3;
     //if (cruise_engaged && !hyundai_cruise_engaged_last) {
-    //  controls_allowed = 1;
+      //controls_allowed = 1;
     //}
     //if (!cruise_engaged) {
-    //  controls_allowed = 0;
-   // }
-   // hyundai_cruise_engaged_last = cruise_engaged;
-  //}
+      //controls_allowed = 0;
+    //}
+    //hyundai_cruise_engaged_last = cruise_engaged;
+    controls_allowed = 1;
+  }
+
 
   // 832 is lkas cmd. If it is on camera bus, then giraffe switch 2 is high
   if ((addr == 832) && (bus == hyundai_camera_bus) && (hyundai_camera_bus != 0)) {
@@ -79,9 +79,9 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
       violation |= max_limit_check(desired_torque, HYUNDAI_MAX_STEER, -HYUNDAI_MAX_STEER);
 
       // *** torque rate limit check ***
-      //violation |= driver_limit_check(desired_torque, hyundai_desired_torque_last, &hyundai_torque_driver,
-      //  HYUNDAI_MAX_STEER, HYUNDAI_MAX_RATE_UP, HYUNDAI_MAX_RATE_DOWN,
-      //  HYUNDAI_DRIVER_TORQUE_ALLOWANCE, HYUNDAI_DRIVER_TORQUE_FACTOR);
+      violation |= driver_limit_check(desired_torque, hyundai_desired_torque_last, &hyundai_torque_driver,
+        HYUNDAI_MAX_STEER, HYUNDAI_MAX_RATE_UP, HYUNDAI_MAX_RATE_DOWN,
+        HYUNDAI_DRIVER_TORQUE_ALLOWANCE, HYUNDAI_DRIVER_TORQUE_FACTOR);
 
       // used next time
       hyundai_desired_torque_last = desired_torque;
@@ -131,15 +131,16 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
 static int hyundai_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
 
   int bus_fwd = -1;
-  // forward cam to ccan and viceversa, except lkas cmd and mdps
+  // forward cam to ccan and viceversa, except lkas cmd
   if (hyundai_giraffe_switch_2) {
-    int addr = GET_ADDR(to_fwd);
     if (bus_num == 0) {
+      int addr = GET_ADDR(to_fwd);
       if (addr != 593) {
         bus_fwd = hyundai_camera_bus;
-      }
+        }
     }
     if (bus_num == hyundai_camera_bus) {
+      int addr = GET_ADDR(to_fwd);
       if (addr != 832) {
         bus_fwd = 0;
       }
