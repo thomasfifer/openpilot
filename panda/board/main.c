@@ -155,6 +155,8 @@ void set_safety_mode(uint16_t mode, int16_t param) {
 
 // ***************************** USB port *****************************
 
+int usb_live = 0;
+
 int get_health_pkt(void *dat) {
   struct __attribute__((packed)) {
     uint32_t voltage_pkt;
@@ -207,6 +209,7 @@ int get_health_pkt(void *dat) {
 }
 
 int usb_cb_ep1_in(void *usbdata, int len, bool hardwired) {
+  usb_live = 1;
   UNUSED(hardwired);
   CAN_FIFOMailBox_TypeDef *reply = (CAN_FIFOMailBox_TypeDef *)usbdata;
   int ilen = 0;
@@ -218,6 +221,7 @@ int usb_cb_ep1_in(void *usbdata, int len, bool hardwired) {
 
 // send on serial, first byte to select the ring
 void usb_cb_ep2_out(void *usbdata, int len, bool hardwired) {
+  usb_live = 1;
   UNUSED(hardwired);
   uint8_t *usbdata8 = (uint8_t *)usbdata;
   uart_ring *ur = get_ring_by_number(usbdata8[0]);
@@ -234,6 +238,7 @@ void usb_cb_ep2_out(void *usbdata, int len, bool hardwired) {
 
 // send on CAN
 void usb_cb_ep3_out(void *usbdata, int len, bool hardwired) {
+  usb_live = 1;
   UNUSED(hardwired);
   int dpkt = 0;
   uint32_t *d32 = (uint32_t *)usbdata;
@@ -250,12 +255,14 @@ void usb_cb_ep3_out(void *usbdata, int len, bool hardwired) {
 }
 
 void usb_cb_enumeration_complete() {
+  usb_live = 1;
   puts("USB enumeration complete\n");
   is_enumerated = 1;
 }
 
 int usb_cb_control_msg(USB_Setup_TypeDef *setup, uint8_t *resp, bool hardwired) {
   unsigned int resp_len = 0;
+  usb_live = 1;
   uart_ring *ur = NULL;
   int i;
   switch (setup->b.bRequest) {
@@ -577,6 +584,20 @@ int spi_cb_rx(uint8_t *data, int len, uint8_t *data_out) {
 }
 #endif
 
+// allow safety_forward to enable sending can messages
+void safety_cb_enable_all(void) {
+      // allow sending can messages
+      can_silent = ALL_CAN_LIVE;
+      can_init_all();
+}
+
+// disable safety_forward
+void safety_cb_disable_all(void) {
+      // disable sending can messages
+      set_safety_mode(SAFETY_NOOUTPUT, 0U);
+      can_init_all();
+}
+
 // ***************************** main code *****************************
 
 // cppcheck-suppress unusedFunction ; used in headers not included in cppcheck
@@ -609,6 +630,18 @@ void TIM3_IRQHandler(void) {
     if ((tcnt & 0xFU) == 0U) {
       pending_can_live = 0;
     }
+    
+    // reset this every 2nd pass
+    if ((tcnt&0x2) == 0) {
+      // check if usb connection is active, attempt forwarding if not
+      if (usb_live == 0 && current_safety_mode != SAFETY_FORWARD) {
+        set_safety_mode(SAFETY_FORWARD, 0);
+        // leave can_silent in it's current state.  Fingerprinting will work with ALL_CAN_SILENT
+        can_init_all();
+      }
+      usb_live = 0;
+    }
+    
     #ifdef DEBUG
       //TODO: re-enable
       //puts("** blink ");
@@ -631,7 +664,7 @@ void TIM3_IRQHandler(void) {
 
     // check heartbeat counter if we are running EON code. If the heartbeat has been gone for a while, go to NOOUTPUT safety mode.
     #ifdef EON
-    if (heartbeat_counter >= (current_board->check_ignition() ? EON_HEARTBEAT_THRESHOLD_IGNITION_ON : EON_HEARTBEAT_THRESHOLD_IGNITION_OFF)) {
+    if ((current_safety_mode != SAFETY_FORWARD) && (heartbeat_counter >= (current_board->check_ignition() ? EON_HEARTBEAT_THRESHOLD_IGNITION_ON : EON_HEARTBEAT_THRESHOLD_IGNITION_OFF))) {
       puts("EON hasn't sent a heartbeat for 0x"); puth(heartbeat_counter); puts(" seconds. Safety is set to NOOUTPUT mode.\n");
       set_safety_mode(SAFETY_NOOUTPUT, 0U);
     }
