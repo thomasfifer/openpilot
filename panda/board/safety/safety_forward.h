@@ -1,93 +1,140 @@
-// Candidate Car Fingerprints
-//  fingerprint format:  [[bus#, addr, len], ...]
-//  all fingerprints must be matched before forwarding will occur.
-//  do not use addresses above 2047 if you want it to ever match.
-uint16_t candidate_fp[2][20][3] = {
-  // Hyundai new Giraffe (camera = bus2)
-  { {2,832,8}, {0,339,8},{0,356,4},{0,593,8},{0,608,8},{0,809,8},{0,897,8},{0,902,8},{0,916,8},{0,1078,4},{0,1170,8},{0,1265,4},{0,1312,8},{0,1345,8},{0,1419,8} },
-  // Hyundai old Giraffe (camera = bus1)
-  { {1,832,8}, {0,339,8},{0,356,4},{0,593,8},{0,608,8},{0,809,8},{0,897,8},{0,902,8},{0,916,8},{0,1078,4},{0,1170,8},{0,1265,4},{0,1312,8},{0,1345,8},{0,1419,8} }
-};
-
-// Candidate Car Forwarding Profiles
-//  forwarding format:   [bus0to, bus1to, bus2to]
-//    array[bus#] = bus# to forward message to (or -1 for no forwarding)
-//  the order of the forwarding profiles must match the candidate_fp order above.
-int forward_profile[2][3] = {
-  // Hyundai new Giraffe (camera = bus2)
-  {  2, -1,  0 },
-  // Hyundai old Giraffe (camera = bus1)
-  {  1,  0, -1 }
-};
-
 // Stores the array index of a matched car fingerprint/forwarding profile
-int identified_car = -1;
-
+int enabled = -1;
+int MDPS12_checksum = -1;
+int MDPS12_cnt = 0;   
+int last_StrColT = 0;
 
 static void forward_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
 
-  // skip everything if we've already completed fingerprinting
-  //   can be extended in the future for fancier forwarding rules based on specific car id
-  if (identified_car >= 0) {
-    return;
+  int bus = GET_BUS(to_push);
+  int addr = GET_ADDR(to_push);
+  
+  if ((bus == 0) && (addr == 832)) {
+    hyundai_camera_detected = 1;
   }
-
-  // temporarily store our bus number, address, and data length
-  uint16_t msg_metadata[3];
-
-  // store the bus number
-  msg_metadata[0] = (uint32_t)0x000000FF & (to_push->RDTR >> 4);
-  // get the can message info needed for fingerprinting
-  if (to_push->RIR & 4) {
-    // Extended addresses
-    // Not looked at, but have to be separated to avoid address collision
-    return;
-  } else {
-    // store the normal address
-    msg_metadata[1] = (uint32_t)0x000007FF & (to_push->RIR >> 21);
+  
+  // Find out which bus the camera is on
+  if ((bus != 0) && (addr == 832)) {
+    hyundai_camera_bus = bus;
   }
-  // store the length
-  msg_metadata[2] = (uint32_t)0x0000000F & (to_push->RDTR);
-
-  // iterate over all candidate fingerprints
-  for (int i = 0; i < (sizeof(candidate_fp) / sizeof(candidate_fp[0])); i++) {
-    bool matched = true;
-    // iterate over all fingers in this fingerprint
-    for (int j = 0; j < (sizeof(candidate_fp[i]) / sizeof(candidate_fp[i][0])); j++) {
-      // search for a match
-      if ( memcmp(candidate_fp[i][j], msg_metadata, sizeof(uint16_t)*3) == 0) {
-        // we matched the candidate finger, so "remove" it's address from the fingerprint array
-        candidate_fp[i][j][1] = (uint16_t) 0;
-      // if any array addr isn't zero in this fingerprint, then we haven't completely matched this car
-      } else if (candidate_fp[i][j][1] != (uint16_t) 0) {
-        matched = false;
+  
+  // 832 is lkas cmd. If it is on camera bus, then giraffe switch 2 is high
+  if ((addr == 832) && (bus == hyundai_camera_bus) && (hyundai_camera_detected != 1)) {
+    hyundai_giraffe_switch_2 = 1;
+  }
+  if (addr == 593) {
+    if (MDPS12_checksum == -1) {
+      int New_Chksum2 = 0;
+      uint8_t dat[8];
+      for (int i=0; i<8; i++) {
+        dat[i] = GET_BYTE(to_push, i);
+        }
+      int Chksum2 = dat[3];
+      dat[3] = 0;
+      for (int i=0; i<8; i++) {
+        New_Chksum2 += dat[i];
+        }
+      New_Chksum2 %= 256;
+      if (Chksum2 == New_Chksum2) {
+      MDPS12_checksum = 1;
+      }
+      else {
+      MDPS12_checksum = 0;
       }
     }
-    if (matched) {
-      // re-init can to allow sending messages
-      safety_cb_enable_all();
-      // we found an exact match, begin forwarding with that profile
-      identified_car = i;
-      break;
+  } 
+  if ((enabled != 1) && (hyundai_camera_detected != 1) && (hyundai_giraffe_switch_2 == 1)) {
+    safety_cb_enable_all();
+    // begin forwarding with that profile
+    enabled = 1;
     }
-  }
+  if ((enabled == 1) && (hyundai_camera_detected == 1)) {
+    // camera connected, disable forwarding
+    enabled = 0;
+    safety_cb_disable_all();
+    }
+
 }
 
 static int forward_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
-  if (identified_car >= 0) {
+  int addr = GET_ADDR(to_send);
+  if (enabled == 1) {
+    if (addr == 593) {
+      
+      uint8_t dat[8];
+      int New_Chksum2 = 0;
+      for (int i=0; i<8; i++) {
+        dat[i] = GET_BYTE(to_send, i);
+      }
+      if (MDPS12_cnt > 330) {
+        int StrColTq = dat[0] | (dat[1] & 0x7) << 8;
+        int OutTq = dat[6] >> 4 | dat[7] << 4;
+        if (MDPS12_cnt == 331) {
+          StrColTq -= 164;
+        } else {
+          StrColTq = last_StrColT + 34;
+        }
+        OutTq = 2058;
+
+        dat[0] = StrColTq & 0xFF;
+        dat[1] &= 0xF8;
+        dat[1] |= StrColTq >> 8;
+        dat[6] &= 0xF;
+        dat[6] |= (OutTq & 0xF) << 4;
+        dat[7] = OutTq >> 4;
+            
+
+        to_send->RDLR &= 0xFFF800;
+        to_send->RDLR |= StrColTq;
+        to_send->RDHR &= 0xFFFFF;
+        to_send->RDHR |= OutTq << 20;
+        last_StrColT = StrColTq;
+        }
+      dat[3] = 0;
+      if (MDPS12_checksum) { 
+        for (int i=0; i<8; i++) {
+          New_Chksum2 += dat[i];
+        }
+        New_Chksum2 %= 256;
+
+      } else if (!MDPS12_checksum) { //we need CRC8 checksum
+        uint8_t crc = 0xFD;
+        uint16_t poly = 0x11D;
+        int i, j;
+        for (i=0; i<8; i++){
+          crc ^= dat[i];
+          for (j=0; j<8; j++) {
+            if ((crc & 0xDF) != 0U) {
+              crc = (uint8_t)((crc << 1) ^ poly);
+            } else {
+              crc <<= 1;
+            }
+          }
+        }
+        New_Chksum2 = crc;
+      }
+      to_send->RDLR |= New_Chksum2 << 24;
+      MDPS12_cnt += 1;
+      MDPS12_cnt %= 345;
+      }
       // must be true for fwd_hook to function
-      return true;
+      return 1;
   }
-  return false;
+  return 0;
 }
 
 static int forward_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
-  // can be extended in the future for fancier forwarding based on specific id
-  if (identified_car >= 0) {
-      // Hopefully you put valid bus numbers in the forwarding profiles!
-      return forward_profile[identified_car][bus_num];
+  UNUSED(to_fwd);
+  int bus_fwd = -1;
+  if (enabled == 1) {
+    if (bus_num == 0) {
+      bus_fwd = hyundai_camera_bus;
+    }
+    if (bus_num == hyundai_camera_bus) {
+      bus_fwd = 0;
+    }
   }
-  return -1;
+  return bus_fwd;
 }
 
 static void forward_init(int16_t param) {
