@@ -577,11 +577,11 @@ void __attribute__ ((noinline)) enable_fpu(void) {
 
 uint64_t tcnt = 0;
 
-// go into NOOUTPUT when the EON does not send a heartbeat for this amount of seconds.
-#define EON_HEARTBEAT_IGNITION_CNT_ON 5U
+// go into NOOUTPUT when the EON does not send a heartbeat for this amount of loops.
+#define EON_HEARTBEAT_IGNITION_CNT_ON 2U
 #define EON_HEARTBEAT_IGNITION_CNT_OFF 2U
 
-// called once per second
+// called 5 times per second (twice heartbeat rate)
 // cppcheck-suppress unusedFunction ; used in headers not included in cppcheck
 void TIM3_IRQHandler(void) {
   if (TIM3->SR != 0) {
@@ -719,8 +719,9 @@ int main(void) {
   }*/
 #endif
 
-  // 48mhz / 65536 ~= 732 / 732 = 1
-  timer_init(TIM3, 732);
+  // 48mhz / 65536 ~= 732
+  // 73 / 732 = .1 seconds = 10 Hz
+  timer_init(TIM3, 73);
   NVIC_EnableIRQ(TIM3_IRQn);
 
 #ifdef DEBUG
