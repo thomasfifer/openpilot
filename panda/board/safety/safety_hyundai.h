@@ -116,6 +116,11 @@ static int hyundai_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
         hyundai_rt_torque_last = desired_torque;
         hyundai_ts_last = ts;
       }
+    } else {
+      if ((hyundai_LKAS_forwarded) && (!OP_LKAS_live)) {
+        hyundai_LKAS_forwarded = 0;
+        return 1;
+      }
     }
 
     // no torque if controls is not allowed
@@ -153,7 +158,7 @@ static int hyundai_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
 
   int bus_fwd = -1;
   // forward cam to ccan and viceversa, except lkas cmd
-  if (!hyundai_camera_detected) {
+  if (hyundai_giraffe_switch_2) {
     if (bus_num == 0) {
       int addr = GET_ADDR(to_fwd);
       if (addr != 1265) {
