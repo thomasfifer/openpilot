@@ -149,7 +149,10 @@ static int nooutput_tx_lin_hook(int lin_num, uint8_t *data, int len) {
         HKG_MDPS12_cnt += 1;
         HKG_MDPS12_cnt %= 345;
       }
-      bus_fwd = 2;
+      bus_fwd = 2 + 10;
+    }
+    if (bus_num == camera_bus) {
+      bus_fwd = 0 + 10;
     }
     if (bus_num == 2) {
       bus_fwd = 0 + 10;
