@@ -2,6 +2,9 @@ bool HKG_forwarding_enabled = 1;
 int HKG_MDPS12_checksum = -1;
 int HKG_MDPS12_cnt = 0;   
 int HKG_last_StrColT = 0;
+int camera_detected = -1;
+int camera_bus = -1;
+int giraffe_switch_2 = -1;
 
 void default_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
   int bus = GET_BUS(to_push);
@@ -42,9 +45,9 @@ void default_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
   if ((addr == 832) && (bus == camera_bus) && (camera_detected != 1)) {
     giraffe_switch_2 = 1;
   }
-  if ((enabled == 1) && (camera_detected == 1)) {
+  if ((HKG_forwarding_enabled == 1) && (camera_detected == 1)) {
     // camera connected, disable forwarding
-    enabled = 0;
+    HKG_forwarding_enabled = 0;
     safety_cb_disable_all();
     }
   
