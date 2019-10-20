@@ -48,9 +48,6 @@ void default_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
   if ((HKG_forwarding_enabled == 1) && (camera_detected == 1)) {
     // camera connected, disable forwarding
     HKG_forwarding_enabled = 0;
-    // disable sending can messages
-    set_safety_mode(SAFETY_NOOUTPUT, 0U);
-    can_init_all();
   }
   
 }
