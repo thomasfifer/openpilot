@@ -65,14 +65,7 @@ class CarController():
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert,
               left_line, right_line, left_lane_depart, right_lane_depart):
-    ### Error State Resets
-    disable_steer = False
     
-    ### Minimum Steer Speed
-    if CS.v_ego_raw < 14.7:
-      disable_steer = True
-    
-    ### Turning Indicators
     if CS.left_blinker_on or CS.right_blinker_on:
       self.turning_signal_timer = 100  # Disable for 1.0 Seconds after blinker turned off
     if self.turning_signal_timer:
@@ -83,11 +76,8 @@ class CarController():
 
     apply_steer = apply_std_steer_torque_limits(apply_steer, self.apply_steer_last, CS.steer_torque_driver, SteerLimitParams)
 
-    if not enabled or disable_steer:
+    if not enabled:
       apply_steer = 0
-      steer_req = 0
-    else:
-      steer_req = 1
 
     self.apply_steer_last = apply_steer
 
