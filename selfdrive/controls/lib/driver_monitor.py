@@ -210,7 +210,7 @@ class DriverStatus():
       # pre green alert
       alert = 'preDriverDistracted' if self.active_monitoring_mode else 'preDriverUnresponsive'
 
-    if alert is not None:
+    #if alert is not None:
       #events.append(create_event(alert, [ET.WARNING]))
 
     return events
