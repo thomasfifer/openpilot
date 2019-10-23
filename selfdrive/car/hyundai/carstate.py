@@ -212,9 +212,9 @@ class CarState():
     self.angle_steers = cp.vl["SAS11"]['SAS_Angle']
     self.angle_steers_rate = cp.vl["SAS11"]['SAS_Speed']
     self.yaw_rate = cp.vl["ESP12"]['YAW_RATE']
-    self.left_blinker_on = cp.vl["CGW1"]['CF_Gway_TSigLHSw']
+    self.left_blinker_on = True if (cp.vl["CGW1"]['CF_Gway_TSigLHSw'] == True) or (cp.vl["CGW1"]['CF_Gway_TurnSigLh'] == True) else False
     self.left_blinker_flash = cp.vl["CGW1"]['CF_Gway_TurnSigLh']
-    self.right_blinker_on = cp.vl["CGW1"]['CF_Gway_TSigRHSw']
+    self.right_blinker_on = True if (cp.vl["CGW1"]['CF_Gway_TSigRHSw'] == True) or (cp.vl["CGW1"]['CF_Gway_TurnSigRh'] == True) else False
     self.right_blinker_flash = cp.vl["CGW1"]['CF_Gway_TurnSigRh']
     self.steer_override = abs(cp.vl["MDPS12"]['CR_Mdps_StrColTq']) > STEER_THRESHOLD or self.left_blinker_on or self.right_blinker_on
     self.steer_state = cp.vl["MDPS12"]['CF_Mdps_ToiActive'] #0 NOT ACTIVE, 1 ACTIVE
