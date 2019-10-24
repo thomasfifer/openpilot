@@ -79,6 +79,8 @@ class CarController():
     if not enabled:
       apply_steer = 0
 
+    steer_req = 1 if enabled else 0
+
     self.apply_steer_last = apply_steer
 
     hud_alert, lane_visible, left_lane_warning, right_lane_warning =\
