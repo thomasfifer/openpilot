@@ -15,9 +15,11 @@ sudo apt-get update && sudo apt-get install -y \
     git \
     libavformat-dev libavcodec-dev libavdevice-dev libavutil-dev libswscale-dev libavresample-dev libavfilter-dev \
     libarchive-dev \
+    libboost-dev \
     libbz2-dev \
     libcurl4-openssl-dev \
     libeigen3-dev \
+    libexpat1-dev \
     libffi-dev \
     libglew-dev \
     libgles2-mesa-dev \
@@ -51,6 +53,7 @@ sudo apt-get update && sudo apt-get install -y \
     sudo \
     vim \
     wget \
+    zlib1g-dev \
     gcc-arm-none-eabi
 
 # install git lfs
