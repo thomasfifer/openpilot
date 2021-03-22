@@ -31,6 +31,7 @@ sudo apt-get update && sudo apt-get install -y \
     libomp-dev \
     libopencv-dev \
     libpng16-16 \
+    libprotoc-dev \
     libssl-dev \
     libstdc++-arm-none-eabi-newlib \
     libsqlite3-dev \
@@ -44,6 +45,7 @@ sudo apt-get update && sudo apt-get install -y \
     ocl-icd-libopencl1 \
     ocl-icd-opencl-dev \
     opencl-headers \
+    protobuf-compiler \
     python-dev \
     python3-pip \
     qt5-default \
