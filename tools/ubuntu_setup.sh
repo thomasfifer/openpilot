@@ -23,6 +23,7 @@ sudo apt-get update && sudo apt-get install -y \
     libgles2-mesa-dev \
     libglfw3-dev \
     libglib2.0-0 \
+    libhdf5-dev \
     liblzma-dev \
     libmysqlclient-dev \
     libomp-dev \
