@@ -112,7 +112,7 @@ class Car:
     # Set Volvo-specific feature flags (use high bits to avoid any conflicts with standard ALTERNATIVE_EXPERIENCE flags)
     # Standard flags use low bits: DISABLE_STOCK_AEB=2, RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX=8, ALLOW_AEB=16
     # Volvo uses high bits to ensure no current or future conflicts
-    if self.CP.carFingerprint.startswith("VOLVO"):
+    if self.CP.carFingerprint.startswith(("VOLVO_", "POLESTAR_")):
       if self.params.get_bool("VolvoDoubleTapCruise"):
         self.CP.alternativeExperience |= 64   # Bit 6: double-tap cruise
       if self.params.get_bool("VolvoSpoofPAHandsOnWheel"):
