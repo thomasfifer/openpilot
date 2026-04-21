@@ -183,6 +183,20 @@ MAX_ERR_DEG = 6.0  # max |commanded − actual| steering angle in degrees
 - During **sustained override**: the driver holds the wheel; actual can't advance; the gap tries to grow. The cap stops it at 6°. Per finding 3, driver torque needed is proportional to the gap, so capping the gap caps the driver effort at ~6 Nm — matching stock's steady-state feel.
 - During **transient override** (pothole): the cap also helps (peak gap can't exceed 6°), but the behavior still differs from stock's full yield. That's what Mechanism 2 would add later.
 
+### Why the 6° cap does not throttle the EPS on sharp curves
+
+The Volvo EPS slews the wheel at a fixed maximum ~25°/s when `LCA_RATE_OF_CHANGE = 80`. At the 100 Hz control loop that is 0.25° of wheel motion per frame. A 6° cap represents ~240 ms worth of EPS slewing headroom — far more than the EPS needs to saturate its internal rate limit (which happens at only a few degrees of commanded-vs-actual error).
+
+What this means on a sharp curve, absent driver interference:
+
+1. Planner demands a big target angle fast.
+2. Each frame the cap keeps `apply_angle` at most 6° ahead of actual.
+3. The EPS sees a 6° position error — well above its saturation threshold — so it slews at its max 25°/s.
+4. Actual catches up at 0.25°/frame; the cap window slides along with it.
+5. Wheel speed on the curve is identical to what it would be without any cap: limited by the EPS, not by us.
+
+The cap only affects behavior when the wheel **cannot** follow the commanded angle (because the driver is physically holding it back). That is the driver-override case — exactly the behavior we want to target.
+
 ### Placement rationale (carcontroller.py)
 
 The cap goes *after* `apply_angle = actuators.steeringAngleDeg` and *before* the `if not CC.latActive: apply_angle = CS.out.steeringAngleDeg` line. This way:
