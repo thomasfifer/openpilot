@@ -100,3 +100,6 @@ TASK.md
 *.csv
 route_analysis/*.csv
 route_analysis/*.csv.gz
+
+# Personal / local-only investigation notes (route IDs, dongle IDs, etc.)
+docs/plans/.private/
