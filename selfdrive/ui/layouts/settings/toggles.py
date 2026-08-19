@@ -41,6 +41,12 @@ DESCRIPTIONS = {
   ),
   "VolvoDoubleTapCruise": tr_noop("Engage openpilot when cruise control is double-tapped on Volvo cars."),
   "VolvoSpoofPAHandsOnWheel": tr_noop("Spoof hands-on-wheel signals in PSCM message from party bus to main bus when stock Pilot Assist is engaged."),
+  "MADS": tr_noop(
+    "Modified Assistive Driving Safety. On Volvo cars, quickly tap the cruise control button off, on, then off again " +
+    "within half a second to let openpilot control steering while the car's own adaptive cruise control stays off. " +
+    "You can then drive using the gas and brake pedals yourself without openpilot disengaging. Tapping the cruise " +
+    "button on again keeps this mode active; the next off press ends it."
+  ),
 }
 
 
@@ -109,6 +115,12 @@ class TogglesLayout(Widget):
       "VolvoSpoofPAHandsOnWheel": (
         lambda: tr("Pilot Assist engaged: Spoof hands on steering wheel"),
         DESCRIPTIONS["VolvoSpoofPAHandsOnWheel"],
+        "chffr_wheel.png",
+        True,
+      ),
+      "MADS": (
+        lambda: tr("MADS"),
+        DESCRIPTIONS["MADS"],
         "chffr_wheel.png",
         True,
       ),

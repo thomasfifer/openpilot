@@ -116,6 +116,8 @@ class Car:
         self.CP.alternativeExperience |= 64   # Bit 6: double-tap cruise
       if self.params.get_bool("VolvoSpoofPAHandsOnWheel"):
         self.CP.alternativeExperience |= 128  # Bit 7: spoof PA hands on wheel
+      if self.params.get_bool("MADS"):
+        self.CP.alternativeExperience |= 256  # Bit 8: MADS (lateral-only mode, stock ACC off)
 
     openpilot_enabled_toggle = self.params.get_bool("OpenpilotEnabledToggle")
     controller_available = self.CI.CC is not None and openpilot_enabled_toggle and not self.CP.dashcamOnly

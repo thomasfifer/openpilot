@@ -31,6 +31,7 @@ class TogglesLayoutMici(NavScroller):
     # Volvo-specific toggles
     volvo_double_tap = BigParamControl("double-tap cruise engage", "VolvoDoubleTapCruise", toggle_callback=restart_needed_callback)
     volvo_spoof_pa = BigParamControl("PA: spoof hands on wheel", "VolvoSpoofPAHandsOnWheel", toggle_callback=restart_needed_callback)
+    volvo_mads = BigParamControl("MADS", "MADS", toggle_callback=restart_needed_callback)
 
     # Screen settings
     current_timeout = ui_state.params.get("OnroadScreenSleepTimeout", return_default=True) or 0
@@ -59,6 +60,7 @@ class TogglesLayoutMici(NavScroller):
       record_mic,
       volvo_double_tap,
       volvo_spoof_pa,
+      volvo_mads,
       self._screen_sleep_toggle,
       self._brightness_toggle,
       enable_openpilot,
@@ -75,6 +77,7 @@ class TogglesLayoutMici(NavScroller):
       ("OpenpilotEnabledToggle", enable_openpilot),
       ("VolvoDoubleTapCruise", volvo_double_tap),
       ("VolvoSpoofPAHandsOnWheel", volvo_spoof_pa),
+      ("MADS", volvo_mads),
     )
 
     enable_openpilot.set_enabled(lambda: not ui_state.engaged)
@@ -82,6 +85,7 @@ class TogglesLayoutMici(NavScroller):
     record_mic.set_enabled(lambda: not ui_state.engaged)
     volvo_double_tap.set_enabled(lambda: not ui_state.engaged)
     volvo_spoof_pa.set_enabled(lambda: not ui_state.engaged)
+    volvo_mads.set_enabled(lambda: not ui_state.engaged)
 
     if ui_state.params.get_bool("ShowDebugInfo"):
       gui_app.set_show_touches(True)

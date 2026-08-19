@@ -193,8 +193,10 @@ class SelfdriveD:
           self.events.add(EventName.pcmEnable)
 
       # Disable on rising edge of accelerator or brake. Also disable on brake when speed > 0
-      if (CS.gasPressed and not self.CS_prev.gasPressed and self.disengage_on_accelerator) or \
-        (CS.brakePressed and (not self.CS_prev.brakePressed or not CS.standstill)) or \
+      # madsActive (currently Volvo-only): driver is expected to drive with the pedals while
+      # openpilot keeps steering, so pedal presses should not disengage
+      if (CS.gasPressed and not self.CS_prev.gasPressed and self.disengage_on_accelerator and not CS.madsActive) or \
+        (CS.brakePressed and (not self.CS_prev.brakePressed or not CS.standstill) and not CS.madsActive) or \
         (CS.regenBraking and (not self.CS_prev.regenBraking or not CS.standstill)):
         self.events.add(EventName.pedalPressed)
 
